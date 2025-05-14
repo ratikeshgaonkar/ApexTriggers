@@ -1,4 +1,6 @@
 //Platform Event Trigger on Account for bulk and checking the governor limits also
+//scenario is comparing the old data with new if its new than update it
+
 
 trigger AccountHandler on Account(after insert){
     if(TriggerHandler.firstRun){
