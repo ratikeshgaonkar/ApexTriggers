@@ -1,0 +1,39 @@
+//Platform Event Trigger on Account for bulk and checking the governor limits also
+
+trigger AccountHandler on Account(after insert){
+    if(TriggerHandler.firstRun){
+
+        //Apex Class for recursion prevention
+        TriggerHandler.updateAccountData(Trigger.oldMap,Trigger.NewMap)
+    }
+}
+
+public class TriggerHandler{
+
+    public static boolean firstRun = true;
+
+    public static void updateAccountData(Map<Id, Account> oldMap, Map<Id,Account> NewMap){
+
+        List<Account_Update__e> eventToPublish = new List<Account_Update__e>();
+
+        //newMap.keySet() return the set<Id> --- the collection of all record Ids being processed in current trigger context
+        //It avoids the loop and Compare old and new values using both oldMap.get(id) and newMap.get(id).
+        for(Id accId : newMap.keySet()){
+            Account oldAcc= oldMap.get(accId);
+            Account newAcc= newMap.get(accId);
+
+            if(oldAcc!=newAcc){
+                eventToPublish.add(new Account_Update__e(
+                    AccountId =  accId,
+                    oldName__c = oldAcc.Name,
+                    newName__c = newAcc.Name,
+                ))
+            }
+        }
+        if(!eventToPublish.isEmpty()){
+            //for Bulk publish
+            Database.saveResult[] results = EventBus.publish(eventToPublish);
+        }
+    }
+}
+
