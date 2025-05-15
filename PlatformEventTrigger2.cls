@@ -15,6 +15,8 @@ public class TriggerHandler {
 
         list<Account_Update__e> eventToPublish = new list<Account_Update__e>();
 
+       //newMap.keySet() return the data which has been heat to the trigger for Example Account
+
         for(Id accId : newMap.keySet()){
 
             Account oldAcc = oldMap.get(accId);
