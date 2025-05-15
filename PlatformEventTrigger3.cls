@@ -30,6 +30,8 @@ trigger AccountHandler on Account(after insert){
 public class TriggerHandler{
     public static void updateContactRecords(Map<Id,Account> newMap){
 
+        public static boolean firstRun= true;
+
         Set<Id> accList = newMap.keySet();
         list<Account_Update__e> accountUpdatePlatformEvent = new List<Account_Update__e>();
 
@@ -48,7 +50,7 @@ public class TriggerHandler{
 
 //Subscriber
 trigger AccountUpdateOnPlatformEvent on Account_Update__e(after insert){
-        if(Trigger.isInsert && Trigger.isAfter){
+        if(Trigger.isInsert && Trigger.isAfter && firstRun){
             System.enqueueJob(new ProcessAccountUpdateEvent(Trigger.New));
         }
 
